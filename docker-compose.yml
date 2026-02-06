@@ -11,3 +11,4 @@ services:
     volumes:
       # Mount entire project directory with write permissions
       - .:/app
+      - ./.env:/app/.env:ro
