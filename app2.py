@@ -26,8 +26,8 @@ AUTHORITY = f"https://login.microsoftonline.com/{TENANT_ID}"
 # Don't include reserved scopes like 'offline_access'/'openid'/'profile' here.
 # MSAL will add the required OpenID/OAuth reserved scopes automatically.
 SCOPES = ["Mail.Send"]  # delegated scopes
-TOKEN_CACHE_FILE = "msal_token_cache.json"
-DB_PATH = "outreach_log.sqlite"
+TOKEN_CACHE_FILE = os.getenv("TOKEN_CACHE_FILE", "msal_token_cache.json")
+DB_PATH = os.getenv("DB_PATH", "outreach_log.sqlite")
 
 GRAPH_SENDMAIL = f"https://graph.microsoft.com/v1.0/users/{SENDER_UPN}/sendMail"
 

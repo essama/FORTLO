@@ -6,6 +6,7 @@ services:
     container_name: fortlo-outreach
     environment:
       - PYTHONUNBUFFERED=1
+      - CSV_PATH=/app/data/mdg_high_intent.csv
     volumes:
       # Mount .env file (create it in the project root first)
       - ./.env:/app/.env:ro
