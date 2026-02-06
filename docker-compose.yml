@@ -6,16 +6,8 @@ services:
     container_name: fortlo-outreach
     environment:
       - PYTHONUNBUFFERED=1
-      - CSV_PATH=/app/data/mdg_high_intent.csv
+      - CSV_PATH=/app/test.csv
+      - DB_PATH=/app/db/outreach_log.sqlite
     volumes:
-      # Mount .env file (create it in the project root first)
-      - ./.env:/app/.env:ro
-      # Mount CSV data directory
-      - ./data:/app/data:ro
-      # Mount database and logs (so they persist on host)
-      - ./db:/app/db
-      - ./logs:/app/logs
-    # Uncomment to keep container running for debugging
-    # stdin_open: true
-    # tty: true
-    # Command line: docker-compose run fortlo-email bash
+      # Mount entire project directory with write permissions
+      - .:/app

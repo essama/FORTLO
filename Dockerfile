@@ -14,16 +14,12 @@ COPY forte4_logo.png .
 # Create directories for mounted volumes
 RUN mkdir -p logger data logs db
 
-# Volume mounts for:
-# - .env (environment variables)
-# - data/ (CSV input files)
-# - db/ (database output)
-# - logs/ (log files)
-
+# Volume mounts (Docker-managed named volumes)
 VOLUME ["/app/.env", "/app/data", "/app/db", "/app/logs"]
 
-# Set .env file location (user should mount it)
+# Set environment
 ENV PYTHONUNBUFFERED=1
+ENV DB_PATH=/app/db/outreach_log.sqlite
 
 # Run the application
 CMD ["python", "app2.py"]
