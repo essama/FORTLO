@@ -1,3 +1,5 @@
+"""This app generates leads based on predefined criteria"""
+
 import os
 import csv
 import time

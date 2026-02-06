@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project
+*.sqlite
+*.sqlite3
+msal_token_cache.json
+
+# Logs and data (mounted as volumes)
+logs/
+db/
+data/

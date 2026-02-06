@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  fortlo-email:
+    build: .
+    container_name: fortlo-outreach
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount .env file (create it in the project root first)
+      - ./.env:/app/.env:ro
+      # Mount CSV data directory
+      - ./data:/app/data:ro
+      # Mount database and logs (so they persist on host)
+      - ./db:/app/db
+      - ./logs:/app/logs
+    # Uncomment to keep container running for debugging
+    # stdin_open: true
+    # tty: true
+    # Command line: docker-compose run fortlo-email bash

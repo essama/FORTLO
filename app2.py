@@ -1,3 +1,4 @@
+"""this app sends leads emails"""
 import os
 import re
 import time
