@@ -1,14 +1,19 @@
 version: '3.8'
 
 services:
-  fortlo-email:
+  fortlo-app3:
     build: .
-    container_name: fortlo-outreach
+    container_name: fortlo-app3
+    command: python app3.py
     environment:
       - PYTHONUNBUFFERED=1
-      - CSV_PATH=/app/test.csv
-      - DB_PATH=/app/db/outreach_log.sqlite
+      - CSV_PATH=/app/apollo_mdg_leads.csv
+      - DB_PATH=/app/outreach_log.sqlite
+      - DATABASE_URL=sqlite:////app/fortlo.db
     volumes:
-      # Mount entire project directory with write permissions
+      # Mount project source for live edits.
       - .:/app
       - ./.env:/app/.env:ro
+      # Force container DB files to be exactly the same host files.
+      - ./fortlo.db:/app/fortlo.db
+      - ./outreach_log.sqlite:/app/outreach_log.sqlite

@@ -1,4 +1,12 @@
-"""this app sends leads emails"""
+"""
+Outbound lead email sender (CSV-driven).
+
+What this app does:
+- Loads lead/contact records from a CSV source.
+- Authenticates with Microsoft Graph using MSAL.
+- Sends personalized outreach emails with attachments.
+- Tracks send status in a local SQLite log and enforces daily safety limits.
+"""
 import os
 import re
 import time
@@ -66,6 +74,12 @@ def sent_count_today(con) -> int:
 def already_sent_today(con, email: str) -> bool:
     cur = con.cursor()
     cur.execute("SELECT 1 FROM sent WHERE send_date=? AND email=? LIMIT 1", (str(date.today()), email))
+    return cur.fetchone() is not None
+
+def already_sent(con, email: str) -> bool:
+    """Check if email has ever been sent (all time, not just today)"""
+    cur = con.cursor()
+    cur.execute("SELECT 1 FROM sent WHERE email=? LIMIT 1", (email,))
     return cur.fetchone() is not None
 
 def company_count_today(con, company: str) -> int:
@@ -263,12 +277,18 @@ def main():
     df = pd.read_csv(CSV_PATH)
 
     # Normalize + filter
+    print(len(df))
     df["email"] = df["email"].astype(str).str.strip()
+    print(len(df))
+
     df["email_status_norm"] = df.get("email_status", "").astype(str).str.lower().str.strip()
-    df = df[df["email"].apply(is_valid_email)]
+    df = df[df["email"].astype(str).str.strip().apply(is_valid_email)]
     df = df[df["email_status_norm"].isin(ALLOWED_EMAIL_STATUS)]
     df = df[~df["email"].str.lower().isin(do_not_email)]
-    #df = df[~df["email"].apply(lambda e: already_sent_today(con, e))]
+    print(len(df))
+
+    df = df[~df["email"].apply(lambda e: already_sent(con, e))]
+    print(len(df))
 
     # Simple seniority scoring (optional)
     def seniority_score(title: str) -> int:
@@ -281,7 +301,6 @@ def main():
     df["seniority_score"] = df.get("title", "").apply(seniority_score)
     df = df.sort_values(by=["seniority_score"], ascending=False)
 
-    token = get_access_token()
 
     sent_now = 0
     log({len(df)})
@@ -304,7 +323,7 @@ def main():
         person_id = str(row.get("person_id", "")).strip()
 
         try:
-            resp = graph_post_sendmail(token, payload)
+            resp = graph_post_sendmail(get_access_token(), payload)
 
             # If token expired/invalid (401), refresh token and retry once
             if resp.status_code == 401:

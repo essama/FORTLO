@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Contacts</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }
+      .row { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+      label { display:block; font-size: 12px; color:#444; margin-bottom:6px; }
+      input { padding: 10px; border:1px solid #ddd; border-radius: 10px; min-width: 240px; }
+      button { padding: 10px 14px; border:0; border-radius: 10px; cursor:pointer; }
+      button.primary { background:#111; color:#fff; }
+      button.ghost { background:#f3f3f3; }
+      table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+      th, td { text-align:left; padding: 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+      th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color:#555; }
+      .meta { color:#666; font-size: 12px; margin-top: 8px; }
+      .pill { display:inline-block; padding: 2px 8px; border-radius: 999px; background:#f3f3f3; font-size: 12px; }
+      .pagination { display:flex; gap:8px; align-items:center; margin-top: 14px; flex-wrap: wrap; }
+      a { color: inherit; text-decoration: none; }
+      .linkbtn { padding: 8px 10px; border:1px solid #ddd; border-radius: 10px; }
+      .linkbtn.disabled { opacity: .5; pointer-events: none; }
+      .linkbtn.active { background:#111; color:#fff; border-color:#111; }
+      .nowrap { white-space: nowrap; }
+      .small { font-size: 12px; color: #666; }
+      .empty { padding: 18px; background:#fafafa; border: 1px dashed #ddd; border-radius: 14px; margin-top: 16px; }
+    </style>
+  </head>
+  <body>
+    <h1>Contacts</h1>
+
+    <form method="get" action="/contacts">
+      <div class="row">
+        <div>
+          <label>Search (name, email, title)</label>
+          <input name="q" value="{{ q }}" placeholder="e.g. Peter, CEO, peter@example.com" />
+        </div>
+        <div>
+          <label>Customer ID</label>
+          <input name="customer_id" value="{{ customer_id }}" placeholder="optional customer UUID" />
+        </div>
+        <div>
+          <label>Page size</label>
+          <input name="page_size" value="{{ page_size }}" style="min-width:120px" />
+        </div>
+        <div>
+          <button class="primary" type="submit">Apply</button>
+          <a class="linkbtn" href="/contacts">Reset</a>
+        </div>
+      </div>
+    </form>
+
+    <div class="meta">
+      {% if total %}
+        Showing <b>{{ contacts|length }}</b> of <b>{{ total }}</b> result(s).
+      {% else %}
+        No results.
+      {% endif %}
+    </div>
+
+    {% if contacts and contacts|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Title</th>
+            <th>Customer</th>
+            <th>Sent</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in contacts %}
+            <tr>
+              <td>{{ c.first_name }} {{ c.last_name }}</td>
+              <td>{{ c.email }}</td>
+              <td>{{ c.job_title or "" }}</td>
+              <td><a href="/customers?q=&tenant_id=&page_size=20&customer_id={{ c.customer_id }}">{{ c.customer.name if c.customer else '' }}</a></td>
+              <td>{{ sent_counts.get(c.id, 0) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if pages and pages > 1 %}
+        <div class="pagination">
+          {% set prev_page = page - 1 %}
+          {% set next_page = page + 1 %}
+
+          <a class="linkbtn {{ 'disabled' if page <= 1 else '' }}"
+             href="/contacts?q={{ q }}&customer_id={{ customer_id }}&page={{ prev_page }}&page_size={{ page_size }}">
+            ← Prev
+          </a>
+
+          {% for p in range(1, pages + 1) %}
+            {% if p == 1 or p == pages or (p >= page - 2 and p <= page + 2) %}
+              <a class="linkbtn {{ 'active' if p == page else '' }}"
+                 href="/contacts?q={{ q }}&customer_id={{ customer_id }}&page={{ p }}&page_size={{ page_size }}">
+                {{ p }}
+              </a>
+            {% elif p == page - 3 or p == page + 3 %}
+              <span class="small">…</span>
+            {% endif %}
+          {% endfor %}
+
+          <a class="linkbtn {{ 'disabled' if page >= pages else '' }}"
+             href="/contacts?q={{ q }}&customer_id={{ customer_id }}&page={{ next_page }}&page_size={{ page_size }}">
+            Next →
+          </a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="empty">
+        <b>No contacts found.</b>
+        <div class="small">Try removing filters or searching for a different keyword.</div>
+      </div>
+    {% endif %}
+  </body>
+</html>

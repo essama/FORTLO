@@ -22,4 +22,4 @@ ENV PYTHONUNBUFFERED=1
 ENV DB_PATH=/app/db/outreach_log.sqlite
 
 # Run the application
-CMD ["python", "app2.py"]
+CMD ["python", "app3.py"]
