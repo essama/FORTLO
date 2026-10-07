@@ -8,7 +8,8 @@
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }
       .row { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
       label { display:block; font-size: 12px; color:#444; margin-bottom:6px; }
-      input { padding: 10px; border:1px solid #ddd; border-radius: 10px; min-width: 240px; }
+      input, select { padding: 10px; border:1px solid #ddd; border-radius: 10px; min-width: 180px; background:#fff; }
+      .nav { display:flex; gap:10px; margin-bottom: 16px; }
       button { padding: 10px 14px; border:0; border-radius: 10px; cursor:pointer; }
       button.primary { background:#111; color:#fff; }
       button.ghost { background:#f3f3f3; }
@@ -38,6 +39,10 @@
     </style>
   </head>
   <body>
+    <div class="nav">
+      <a class="linkbtn active" href="/customers">Customers</a>
+      <a class="linkbtn" href="/contacts">Contacts</a>
+    </div>
     <h1>Customers</h1>
 
     <form method="get" action="/customers">
@@ -47,8 +52,41 @@
           <input name="q" value="{{ q }}" placeholder="e.g. Novartis, Pharma, Germany..." />
         </div>
         <div>
-          <label>Tenant ID (UUID)</label>
-          <input name="tenant_id" value="{{ tenant_id }}" placeholder="optional tenant UUID" />
+          <label>ICP status</label>
+          <select name="icp_status">
+            <option value="" {% if not icp_status %}selected{% endif %}>All</option>
+            {% for status in icp_status_options %}
+              <option value="{{ status }}" {% if icp_status == status %}selected{% endif %}>{{ status }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Campaign</label>
+          <select name="campaign">
+            <option value="" {% if not campaign %}selected{% endif %}>All</option>
+            <option value="in" {% if campaign == 'in' %}selected{% endif %}>In campaign</option>
+            <option value="out" {% if campaign == 'out' %}selected{% endif %}>Out of campaign</option>
+          </select>
+        </div>
+        <div>
+          <label>Phase</label>
+          <select name="client_phase">
+            <option value="" {% if not client_phase %}selected{% endif %}>All</option>
+            {% for phase in client_phase_options %}
+              <option value="{{ phase }}" {% if client_phase == phase %}selected{% endif %}>{{ phase|replace('_', ' ')|title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label>Unsent contacts</label>
+          <select name="unsent">
+            <option value="" {% if not unsent %}selected{% endif %}>All</option>
+            <option value="yes" {% if unsent == 'yes' %}selected{% endif %}>Has unsent</option>
+          </select>
+        </div>
+        <div>
+          <label>Country</label>
+          <input name="country" value="{{ country }}" placeholder="Germany" style="min-width:140px" />
         </div>
         <div>
           <label>
@@ -61,7 +99,7 @@
           <input name="page_size" value="{{ page_size }}" style="min-width:120px" />
         </div>
         <div>
-          <button class="primary" type="submit">Apply</button>
+          <button class="primary" type="submit">Filter</button>
           <a class="linkbtn" href="/customers">Reset</a>
         </div>
       </div>
@@ -83,6 +121,7 @@
             <th>People</th>
             <th>Location</th>
             <th>Industry</th>
+            <th>ICP</th>
             <th>Firmographics</th>
             <th>Flags</th>
             <th>Phase</th>
@@ -116,8 +155,15 @@
               </td>
               <td>{{ c.industry or "" }}</td>
               <td>
+                {% if c.icp_status %}
+                  <span class="pill">{{ c.icp_status }}</span>
+                  <div class="small">{{ c.score_notes or "" }}</div>
+                {% endif %}
+              </td>
+              <td>
                 <div>Employees: {{ c.employee_count if c.employee_count is not none else "" }}</div>
                 <div>Revenue: {{ c.annual_revenue if c.annual_revenue is not none else "" }}</div>
+                {% if c.revenue_year %}<div class="small">Year {{ c.revenue_year }}</div>{% endif %}
               </td>
               <td>
                 {% if c.is_regulated_industry %}<span class="pill">Regulated</span>{% endif %}
@@ -153,15 +199,16 @@
           {% set prev_page = page - 1 %}
           {% set next_page = page + 1 %}
 
+          {% set qs = 'q=' ~ q ~ '&icp_status=' ~ icp_status ~ '&campaign=' ~ campaign ~ '&client_phase=' ~ client_phase ~ '&country=' ~ country ~ '&unsent=' ~ unsent ~ '&include_contact_names=' ~ ('true' if include_contact_names else 'false') ~ '&page_size=' ~ page_size %}
           <a class="linkbtn {{ 'disabled' if page <= 1 else '' }}"
-             href="/customers?q={{ q }}&tenant_id={{ tenant_id }}&include_contact_names={{ 'true' if include_contact_names else 'false' }}&page={{ prev_page }}&page_size={{ page_size }}">
+             href="/customers?{{ qs }}&page={{ prev_page }}">
             ← Prev
           </a>
 
           {% for p in range(1, pages + 1) %}
             {% if p == 1 or p == pages or (p >= page - 2 and p <= page + 2) %}
               <a class="linkbtn {{ 'active' if p == page else '' }}"
-                 href="/customers?q={{ q }}&tenant_id={{ tenant_id }}&include_contact_names={{ 'true' if include_contact_names else 'false' }}&page={{ p }}&page_size={{ page_size }}">
+                 href="/customers?{{ qs }}&page={{ p }}">
                 {{ p }}
               </a>
             {% elif p == page - 3 or p == page + 3 %}
@@ -170,7 +217,7 @@
           {% endfor %}
 
           <a class="linkbtn {{ 'disabled' if page >= pages else '' }}"
-             href="/customers?q={{ q }}&tenant_id={{ tenant_id }}&include_contact_names={{ 'true' if include_contact_names else 'false' }}&page={{ next_page }}&page_size={{ page_size }}">
+             href="/customers?{{ qs }}&page={{ next_page }}">
             Next →
           </a>
         </div>

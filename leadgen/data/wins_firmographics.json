@@ -1,0 +1,16 @@
+{
+  "purpose": "Size and sector of the won end customers. Group-level figures. Approximate public annual-report numbers entered by hand (not from the CRM). Verify and correct here; the ICP size band is derived from this file.",
+  "wins": [
+    {"company": "ebm-papst", "sector": "manufacturing", "revenue_eur": 2300000000, "employees": 15000, "year": 2024, "hq_country": "Germany"},
+    {"company": "Bechtle", "sector": "it services", "revenue_eur": 6410000000, "employees": 16360, "year": 2025, "hq_country": "Germany"},
+    {"company": "Bosch (ETAS GmbH)", "sector": "manufacturing", "revenue_eur": 90000000000, "employees": 418000, "year": 2024, "hq_country": "Germany", "note": "Bosch group figures; ETAS itself is much smaller."},
+    {"company": "Syngenta Energy", "sector": "chemicals & agri", "revenue_eur": null, "employees": null, "year": null, "hq_country": null, "note": "Entity name on the profile is ambiguous; size left blank."},
+    {"company": "Helleniq Energy", "sector": "energy", "revenue_eur": 12800000000, "employees": 3700, "year": 2023, "hq_country": "Greece"},
+    {"company": "Jungheinrich", "sector": "manufacturing", "revenue_eur": 5400000000, "employees": 21000, "year": 2024, "hq_country": "Germany"},
+    {"company": "Novartis", "sector": "pharma & life sciences", "revenue_eur": 46000000000, "employees": 76000, "year": 2024, "hq_country": "Switzerland"},
+    {"company": "AstraZeneca", "sector": "pharma & life sciences", "revenue_eur": 50000000000, "employees": 90000, "year": 2024, "hq_country": "United Kingdom"},
+    {"company": "LIXIL", "sector": "manufacturing", "revenue_eur": 9300000000, "employees": 55000, "year": 2024, "hq_country": "Japan"},
+    {"company": "Boehringer Ingelheim", "sector": "pharma & life sciences", "revenue_eur": 26800000000, "employees": 54000, "year": 2024, "hq_country": "Germany"},
+    {"company": "Takeda", "sector": "pharma & life sciences", "revenue_eur": 28000000000, "employees": 48000, "year": 2024, "hq_country": "Japan"}
+  ]
+}

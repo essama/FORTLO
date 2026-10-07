@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Find companies</title>
+  <style>
+    body { margin: 0; font: 16px/1.45 Georgia, "Times New Roman", serif; color: #1c1917; background: #f6f3ee; }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 32px 0 8px; }
+    p { margin: 8px 0; }
+    .meta { color: #57534e; font-family: Consolas, monospace; font-size: 13px; }
+    .banner { background: #fff; border: 1px solid #d6d3d1; padding: 12px 14px; margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-family: Consolas, "Segoe UI", sans-serif; font-size: 13px; }
+    th, td { border-bottom: 1px solid #e7e5e4; text-align: left; vertical-align: top; padding: 8px; }
+    th { background: #292524; color: #fafaf9; font-weight: 600; }
+    .card { background: #fff; border: 1px solid #d6d3d1; padding: 14px 16px; margin: 12px 0; }
+    button { font: 14px/1 Consolas, monospace; background: #292524; color: #fff; border: 0; padding: 10px 14px; cursor: pointer; }
+    .low { color: #9f1239; }
+    .pursue { color: #166534; font-weight: 600; }
+    .tag { font: 11px Consolas, monospace; background: #e7e5e4; padding: 1px 5px; border-radius: 3px; }
+    .lede { font-size: 19px; background: #fff; border-left: 4px solid #292524; padding: 10px 14px; }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e7e5e4; background: #1c1917; }
+      .banner, .card, table, .lede { background: #292524; border-color: #44403c; }
+      th { background: #0c0a09; }
+      td, th { border-color: #44403c; }
+      .meta { color: #a8a29e; }
+      .tag { background: #44403c; }
+      .low { color: #fb7185; } .pursue { color: #4ade80; }
+    }
+  </style>
+  <style>
+    textarea { width: 100%; box-sizing: border-box; font: 15px/1.4 Consolas, monospace; padding: 10px; min-height: 64px; }
+    .row-known td { opacity: .55; }
+    .filters td:first-child { width: 160px; color: #57534e; }
+    nav a { margin-right: 14px; }
+    .table-wrap { overflow-x: auto; }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="meta"><a href="/">ICP flow</a><a href="/search">Find companies</a><a href="/outreach">Outreach</a></nav>
+  <h1>Find companies</h1>
+  <p>Describe the companies you want in plain English. grok turns it into Apollo filters (your profile fills in
+     anything you leave out), Apollo returns one page, and every company is scored against your ICP.
+     No contacts are searched and no contact credits are used here: ticked companies go into the queue and
+     the next refuel finds their decision makers first.</p>
+  {% if message %}<div class="banner">{{ message }}</div>{% endif %}
+  <form method="post" action="/search">
+    <textarea name="q" placeholder="e.g. pharma and medtech groups in Switzerland and southern Germany running S/4HANA, over 2bn revenue">{{ s.request if s else "" }}</textarea>
+    <p><button type="submit">Search</button> <span class="meta">Takes up to a minute or two: one grok call, one Apollo page, then scoring.</span></p>
+  </form>
+
+  {% if s and s.error %}
+    <div class="banner low">Search failed: {{ s.error }}</div>
+  {% elif s %}
+    <h2>How the request was read</h2>
+    <table class="filters">
+      <tr><td>Reading</td><td>{{ s.spec.explain or "-" }}</td></tr>
+      <tr><td>Locations</td><td>{{ s.spec.locations | join(", ") }}</td></tr>
+      <tr><td>Industry tags</td><td>{{ s.spec.keyword_tags | join(", ") or "any" }}</td></tr>
+      <tr><td>Technology</td><td>{{ s.spec.technologies | join(", ") or "any" }}</td></tr>
+      <tr><td>Revenue (EUR)</td><td>{{ "{:,.0f}".format(s.spec.revenue_min_eur or 0) }} - {{ "{:,.0f}".format(s.spec.revenue_max_eur or 0) }}</td></tr>
+      <tr><td>Employees</td><td>{{ s.spec.employee_ranges | join("; ") }}</td></tr>
+      {% if s.spec.titles %}<tr><td>Titles</td><td>{{ s.spec.titles | join(", ") }}</td></tr>{% endif %}
+    </table>
+    {% if s.note %}<p class="meta">{{ s.note }}</p>{% endif %}
+
+    <h2>{{ s.rows | length }} companies</h2>
+    {% if s.rows %}
+    <form method="post" action="/queue">
+    <div class="table-wrap"><table>
+      <tr><th></th><th>Score</th><th>Company</th><th>Country</th><th>Revenue</th><th>Employees</th><th>Industry</th><th>Why</th></tr>
+      {% for row in s.rows %}
+      <tr class="{{ 'row-known' if row.known or row.big_group }}">
+        <td>{% if not row.known and not row.big_group %}<input type="checkbox" name="domain" value="{{ row.domain }}" {{ 'checked' if row.decision == 'pursue' }}>{% endif %}</td>
+        <td class="{{ 'pursue' if row.decision == 'pursue' else 'low' }}">{{ row.score }}<br>{{ row.decision }}</td>
+        <td>{{ row.name }}<br><span class="meta">{{ row.domain }}</span>{% if row.known %}<br><span class="tag">already in CRM</span>{% endif %}{% if row.big_group %}<br><span class="tag">big group: excluded</span>{% endif %}</td>
+        <td>{{ row.country }}</td>
+        <td>{{ "EUR {:,.1f}bn".format(row.revenue_eur / 1e9) if row.revenue_eur else "-" }}</td>
+        <td>{{ "{:,}".format(row.employees) if row.employees else "-" }}</td>
+        <td>{{ row.industry or "-" }}{% if row.ai %} <span class="tag">AI</span>{% endif %}</td>
+        <td class="meta">{{ row.reason }}</td>
+      </tr>
+      {% endfor %}
+    </table></div>
+    <p><button type="submit">Queue ticked companies for the next refuel</button></p>
+    </form>
+    {% endif %}
+  {% endif %}
+
+  <h2>Queue ({{ queue | length }})</h2>
+  {% if queue %}
+  <table>
+    <tr><th>Company</th><th>Added</th><th>From</th></tr>
+    {% for q in queue %}<tr><td>{{ q.name }} <span class="meta">{{ q.primary_domain }}</span></td><td>{{ q._added_at }}</td><td class="meta">{{ q._source }}</td></tr>{% endfor %}
+  </table>
+  {% else %}<p class="meta">Empty. The next refuel takes queued companies first, then grok lookalikes, then the profile search.</p>{% endif %}
+</main>
+</body>
+</html>

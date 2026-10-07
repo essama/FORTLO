@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Outreach</title>
+  <style>
+    body { margin: 0; font: 16px/1.45 Georgia, "Times New Roman", serif; color: #1c1917; background: #f6f3ee; }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 32px 0 8px; }
+    p { margin: 8px 0; }
+    .meta { color: #57534e; font-family: Consolas, monospace; font-size: 13px; }
+    .banner { background: #fff; border: 1px solid #d6d3d1; padding: 12px 14px; margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-family: Consolas, "Segoe UI", sans-serif; font-size: 13px; }
+    th, td { border-bottom: 1px solid #e7e5e4; text-align: left; vertical-align: top; padding: 8px; }
+    th { background: #292524; color: #fafaf9; font-weight: 600; }
+    .card { background: #fff; border: 1px solid #d6d3d1; padding: 14px 16px; margin: 12px 0; }
+    button { font: 14px/1 Consolas, monospace; background: #292524; color: #fff; border: 0; padding: 10px 14px; cursor: pointer; }
+    .low { color: #9f1239; }
+    .pursue { color: #166534; font-weight: 600; }
+    .tag { font: 11px Consolas, monospace; background: #e7e5e4; padding: 1px 5px; border-radius: 3px; }
+    .lede { font-size: 19px; background: #fff; border-left: 4px solid #292524; padding: 10px 14px; }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e7e5e4; background: #1c1917; }
+      .banner, .card, table, .lede { background: #292524; border-color: #44403c; }
+      th { background: #0c0a09; }
+      td, th { border-color: #44403c; }
+      .meta { color: #a8a29e; }
+      .tag { background: #44403c; }
+      .low { color: #fb7185; } .pursue { color: #4ade80; }
+    }
+  </style>
+  <style>
+    nav a { margin-right: 14px; }
+    textarea { width: 100%; box-sizing: border-box; font: 14px/1.4 Georgia, serif; padding: 8px; min-height: 58px; }
+    .table-wrap { overflow-x: auto; }
+    .kind-reply { color: #166534; font-weight: 600; }
+    .kind-unsubscribe, .kind-bounce, .kind-left { color: #9f1239; }
+    .inline { display: inline; }
+    .stat { display: inline-block; margin-right: 18px; }
+    @media (prefers-color-scheme: dark) { .kind-reply { color: #4ade80; } .kind-unsubscribe, .kind-bounce, .kind-left { color: #fb7185; } }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="meta"><a href="/">ICP flow</a><a href="/search">Find companies</a><a href="/outreach">Outreach</a></nav>
+  <h1>Outreach</h1>
+  {% if message %}<div class="banner">{{ message }}</div>{% endif %}
+  <p class="meta">
+    Follow-ups: <b>{{ "on" if cfg.sequence and cfg.sequence.enabled else "off" }}</b>{% if cfg.sequence and cfg.sequence.start_date %} (from {{ cfg.sequence.start_date }}){% endif %} ·
+    Personalised openers: <b>{{ "on" if cfg.openers and cfg.openers.enabled else "off" }}</b>{% if cfg.openers and cfg.openers.enabled %}, {{ "approval required" if cfg.openers.require_approval != false else "used without approval" }}{% endif %} ·
+    Inbox tracking: <b>on</b>
+  </p>
+  <div class="card">
+    {% for k, v in stats.events.items() %}<span class="stat">{{ k }}: <b>{{ v }}</b></span>{% endfor %}
+    {% for k, v in stats.sequence.items() %}<span class="stat">sequence {{ k }}: <b>{{ v }}</b></span>{% endfor %}
+    {% for k, v in stats.drafts.items() %}<span class="stat">openers {{ k }}: <b>{{ v }}</b></span>{% endfor %}
+  </div>
+
+  <h2>Opener drafts</h2>
+  <p>grok writes these from sourced buying signals. An approved opener goes above the standard question in the first email.
+     Edit the text and press Save, or Approve / Reject. Only drafts with status "approved" are sent while approval is required.</p>
+  {% if drafts %}
+  <form method="post" action="/outreach/decide"><input type="hidden" name="action" value="approve_all">
+    <button type="submit">Approve all drafts</button></form>
+  <div class="table-wrap"><table>
+    <tr><th>Contact</th><th>Opener</th><th>Fact used</th><th>Status</th></tr>
+    {% for d in drafts %}
+    <tr>
+      <td>{{ d.company }}<br><span class="meta">{{ d.title }}<br>{{ d.email }}</span></td>
+      <td>
+        {% if d.status in ("draft", "approved") %}
+        <form method="post" action="/outreach/decide">
+          <input type="hidden" name="contact_id" value="{{ d.contact_id }}">
+          <textarea name="opener">{{ d.opener }}</textarea>
+          <button name="action" value="save">Save</button>
+          <button name="action" value="approve">Approve</button>
+          <button name="action" value="reject">Reject</button>
+        </form>
+        {% else %}{{ d.opener }}{% endif %}
+      </td>
+      <td class="meta">{{ d.fact.fact }}{% if d.fact.date %} ({{ d.fact.date }}){% endif %}
+        {% if d.fact.source_url %}<br><a href="{{ d.fact.source_url }}" target="_blank" rel="noopener">source</a>{% endif %}</td>
+      <td class="{{ 'pursue' if d.status == 'approved' else ('low' if d.status == 'rejected' else '') }}">{{ d.status }}</td>
+    </tr>
+    {% endfor %}
+  </table></div>
+  {% else %}<p class="meta">No drafts. They are written once a day when openers are on, or with <code>python -m leadgen drafts</code>.</p>{% endif %}
+
+  <h2>Replies, bounces, opt-outs</h2>
+  <p class="meta">From the inbox. Each one stops further email to that person; a reply or opt-out stops the whole company. Auto-replies are not listed.</p>
+  {% if events %}
+  <div class="table-wrap"><table>
+    <tr><th>Received</th><th>Kind</th><th>From</th><th>Subject</th><th>Preview</th></tr>
+    {% for e in events %}
+    <tr><td>{{ e.received_at[:10] }}</td><td class="kind-{{ e.kind }}">{{ e.kind }}</td><td>{{ e.email }}</td>
+        <td>{{ e.subject }}</td><td class="meta">{{ e.preview[:160] }}</td></tr>
+    {% endfor %}
+  </table></div>
+  {% else %}<p class="meta">Nothing yet.</p>{% endif %}
+
+  <h2>Follow-up sequence</h2>
+  {% if sequence %}
+  <div class="table-wrap"><table>
+    <tr><th>Contact</th><th>First email</th><th>Step</th><th>Status</th></tr>
+    {% for s in sequence %}
+    <tr><td>{{ s.company }}<br><span class="meta">{{ s.email }}</span></td><td>{{ s.first_sent_at[:10] }}</td>
+        <td>{{ s.step }}</td><td>{{ s.status }}{% if s.stopped_reason %} <span class="meta">({{ s.stopped_reason }})</span>{% endif %}</td></tr>
+    {% endfor %}
+  </table></div>
+  {% else %}<p class="meta">No contacts in a sequence{% if not (cfg.sequence and cfg.sequence.enabled) %} (follow-ups are off){% endif %}.</p>{% endif %}
+</main>
+</body>
+</html>

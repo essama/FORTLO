@@ -1,0 +1,369 @@
+# FORTE4 / FORTLO German ICP — SAP MDG consultancy
+# Bechtle is the size centre (and ceiling analogue). Not a target account.
+
+icp:
+  country: Germany
+  country_codes: [DE, DEU]
+  # Revenue band in EUR. Centre ≈ Bechtle FY2025 revenue €6.41bn;
+  # hard ceiling €10bn (reject groups clearly larger than Bechtle).
+  revenue_min_eur: 5000000000
+  revenue_max_eur: 10000000000
+  bechtle_revenue_eur: 6405900000
+  bechtle_business_volume_eur: 8596100000
+  bechtle_employees: 16360
+  bechtle_revenue_year: 2025
+  # If revenue is unpublished: needs_review only when employees in this
+  # range AND HQ is DE. Otherwise reject.
+  employee_fallback_min: 8000
+  employee_fallback_max: 25000
+
+pipeline:
+  default_limit_accounts: 15
+  contacts_min_per_account: 8
+  contacts_max_per_account: 15
+  apollo_sleep_seconds: 1.2
+  apollo_max_retries: 5
+  apollo_timeout_seconds: 45
+  people_per_page: 100
+  people_max_pages: 2
+
+# Auto-refuel when the sendable list is empty.
+refuel:
+  contacts_per_day: 100
+  empty_recheck_seconds: 1800
+  morning_hour: 7
+  morning_minute: 30
+  titles:
+    - Head of ERP
+    - Leiter ERP
+    - ERP Director
+    - Director ERP
+    - VP ERP
+    - Head of SAP
+    - Leiter SAP
+    - SAP Lead
+    - Head of Applications
+    - ERP Manager
+    - SAP ERP
+    - Leiter SAP ERP
+
+# Leadgen: the profile ICP (./leadgen) decides which Apollo orgs are worth
+# enriching. mode: enforce (only "pursue" orgs get contacts + campaign) or
+# shadow (score recorded only). search_tier adds an Apollo search sized to the
+# won customers (EUR 1bn-135bn) before the small-company tier.
+leadgen:
+  enabled: true
+  mode: enforce
+  pursue_at: 60
+  search_tier:
+    enabled: true
+    revenue_min_eur: 1000000000
+    revenue_max_eur: 135000000000
+    employee_min: 2000
+    max_contacts_per_company: 3
+    max_orgs_per_run: 120
+    pages_per_run: 2
+    auto_campaign: true
+    # Profile sourcing (leadgen/sourcing.py). Sectors, size band and SAP come from the profile ICP.
+    # Set false to go back to the plain size search (LEADGEN_SOURCING_FORCE=1 forces one run on).
+    profile_sourcing: true
+    locations: [Germany, Austria, Switzerland]
+    technologies: [sap]          # Apollo technology uid; dropped automatically if it matches nothing
+    skip_sectors: [it services, other]
+    lookalikes: true             # Claude suggests companies like your wins, checked in Apollo
+    lookalikes_per_run: 25
+    lookalike_revenue_max_eur: 10000000000   # ask Claude for mid-size groups; big groups are excluded anyway
+    max_contacts_per_group: 3    # Merck KGaA / Merck Group / Merck Life Science count as one group
+    ai_titles: true              # Claude adds DE/EN title variants (cached 30 days)
+    titles:
+      - Head of Master Data
+      - Leiter Stammdaten
+      - Head of Data Governance
+      - Master Data Manager
+      - SAP MDG
+      - MDG Lead
+      - Head of ERP
+      - Leiter ERP
+      - Head of SAP
+      - Leiter SAP
+      - SAP Lead
+      - Head of Applications
+
+  # Buying signals (leadgen/signals.py): open SAP MDG / master-data jobs (Apollo) and Claude web
+  # research (S/4 or MDG programs, ERP consolidation, M&A, new CIO), each with a source URL.
+  # Signals add up to 15 points (none for IT services firms). LEADGEN_SIGNALS_FORCE=1 turns them on for one run.
+  signals:
+    enabled: true
+    min_score: 50              # check signals only for companies already this close to pursue (60)
+    jobs_per_run: 60           # Apollo job-posting lookups per refuel
+    research_min_score: 50
+    research_per_run: 10       # Claude web research, about USD 0.15 each, cached 30 days
+    hiring_tier: true          # extra search: profile companies with open SAP MDG / master-data jobs
+    hiring_titles: [SAP MDG, Master Data, Stammdaten, Data Governance, S/4HANA]
+
+# Phase C outreach (outreach.py). Replies, bounces, opt-outs and "left the company" answers are
+# always tracked from the inbox and stop further email to that person (a reply or opt-out stops the
+# whole company). Follow-ups and personalised openers stay off until switched on here.
+outreach:
+  replies:
+    first_scan_days: 60
+  sequence:
+    enabled: false
+    start_date: ""            # only contacts first emailed on/after this day (YYYY-MM-DD) get follow-ups
+    max_per_day: 20           # counts toward DAILY_LIMIT like every other email
+    steps:                    # sent as "Re: <first subject>", N days after the first email
+      - after_days: 5
+        body: |-
+          ich wollte kurz an meine Nachricht von letzter Woche anknüpfen. Ist SAP MDG oder Stammdaten-Governance bei Ihnen derzeit ein Thema – oder gibt es in Ihrem Team eine bessere Ansprechperson dafür?
+        optout: Wenn Sie keine weiteren Nachrichten von mir wünschen, antworten Sie einfach mit „Abmelden“.
+      - after_days: 12
+        body: |-
+          dies ist meine letzte Nachricht zu diesem Thema. Falls SAP MDG oder ein S/4HANA-Stammdatenprojekt später relevant wird, freue ich mich über eine kurze Rückmeldung.
+        optout: Wenn Sie keine weiteren Nachrichten von mir wünschen, antworten Sie einfach mit „Abmelden“.
+  openers:
+    enabled: false
+    require_approval: true    # drafts are used only after approval on the leadgen /outreach page
+    per_day: 20               # Claude drafts per day, only for companies with sourced buying signals
+
+# Small German companies (second refuel tier). Contacts: Head of ERP / IT / MDG
+# in the IT department. Accounts are stored qualified but NOT switched into the
+# email campaign unless auto_campaign is true (review them in the CRM first).
+refuel_small_de:
+  enabled: true
+  revenue_min_eur: 20000000
+  revenue_max_eur: 5000000000
+  employee_ranges: ["201,500", "501,1000", "1001,2000", "2001,5000"]
+  employee_min: 200
+  employee_max: 5000
+  max_contacts_per_company: 3
+  max_orgs_per_run: 120
+  pages_per_run: 2
+  retry_days: 30
+  auto_campaign: true
+  titles:
+    - Head of ERP
+    - Leiter ERP
+    - ERP Manager
+    - ERP Director
+    - Head of SAP
+    - Leiter SAP
+    - SAP Lead
+    - Head of IT
+    - IT Director
+    - IT Manager
+    - Leiter IT
+    - IT-Leiter
+    - CIO
+    - Head of Information Technology
+    - Head of Applications
+    - Leiter Stammdaten
+    - Head of Master Data
+    - Master Data Manager
+    - SAP MDG
+    - MDG Lead
+    - Head of Data Governance
+  title_must_match:
+    - erp
+    - sap
+    - mdg
+    - master data
+    - stammdaten
+    - data governance
+    - "it"
+    - cio
+    - information technology
+    - applications
+    - edv
+  title_reject:
+    - sales
+    - vertrieb
+    - marketing
+    - recruit
+    - assistant
+    - assistenz
+    - intern
+    - praktikant
+    - student
+    - werkstudent
+    - trainee
+    - account executive
+    - business development
+    - consultant
+    - berater
+    - support
+    - project
+    - projekt
+    - security
+    - sicherheit
+    - service desk
+    - helpdesk
+    - product
+    - license
+    - lizenz
+
+# Stage 2 people search (DE + EN). Stored on the account as suggested titles;
+# never invented as fake people.
+suggested_titles:
+  - CIO
+  - CDO
+  - Head of IT
+  - IT Director
+  - Director IT
+  - VP IT
+  - Leiter IT
+  - IT-Leiter
+  - Head of Information Technology
+  - Leiter Stammdaten
+  - Head of Master Data
+  - SAP MDG
+  - S/4HANA Programme
+  - S/4HANA Project
+  - SAP Project Manager
+  - Projektleiter SAP
+  - Projektleiter S/4HANA
+  - Program Manager
+  - Head of ERP
+  - Leiter SAP
+  - SAP Lead
+  - Head of Applications
+  - IT Project Manager
+  - Leiter IT-Projekte
+  - Head of IT Projects
+  - Transformation Manager
+  - Leiter Organisation
+  - Head of Data Governance
+  - Head of Digital
+  - Leiter Digitalisierung
+
+apollo_seniorities:
+  - director
+  - vp
+  - c_suite
+  - head
+  - manager
+
+apollo_person_locations:
+  - Germany
+
+include_industries:
+  - manufacturing
+  - chemicals
+  - pharma
+  - life sciences
+  - automotive supplier
+  - energy
+  - logistics
+  - wholesale
+  - retail
+  - consumer
+  - it
+  - system house
+  - industrial engineering
+  - food
+  - steel
+  - medtech
+  - machinery
+
+denylist_industries:
+  - alcohol
+  - brewery
+  - winery
+  - distillery
+  - spirits
+  - bank
+  - banking
+  - sparkasse
+  - insurance
+  - insurer
+  - asset management
+  - private equity
+  - venture capital
+  - payment
+  - credit institution
+  - fintech
+  - defense
+  - defence
+  - weapons
+  - munitions
+  - wehrtechnik
+  - military
+
+# Never qualify these domains (Bechtle group + operator suppressions).
+suppressed_domains:
+  - bechtle.com
+  - bechtle.de
+  - bechtle-direct.de
+  - bechtle-logistik.de
+  - arp.com
+  - solidline.de
+
+# Personal-mail providers — never stored as a work-email fallback.
+personal_mail_domains:
+  - gmail.com
+  - googlemail.com
+  - yahoo.com
+  - yahoo.de
+  - hotmail.com
+  - outlook.com
+  - live.com
+  - gmx.de
+  - gmx.net
+  - web.de
+  - t-online.de
+  - icloud.com
+  - protonmail.com
+  - me.com
+
+# Groups that are clearly larger than Bechtle even if a vendor shows a low number.
+too_big_groups:
+  - Siemens
+  - Volkswagen
+  - Mercedes-Benz
+  - BMW
+  - Deutsche Telekom
+  - Bosch
+  - Schwarz
+  - Lidl
+  - Kaufland
+  - Deutsche Bahn
+  - BASF
+  - Bayer
+  - SAP
+  - Deutsche Post
+  - DHL
+  - E.ON
+  - Uniper
+  - RWE
+  - EnBW
+  - Lufthansa
+  - Allianz
+  - Munich Re
+  - Deutsche Bank
+  - Commerzbank
+  - Adidas
+  - Henkel
+  - Fresenius
+  - Merck
+  - Boehringer
+  - Thyssenkrupp
+  - Daimler Truck
+  - Porsche
+  - Infineon
+  - Siemens Energy
+  - Siemens Healthineers
+  - Würth
+  - Metro
+  - Edeka
+  - Rewe
+  - Aldi
+  - Ceconomy
+  - Otto Group
+  - TUI
+  - Hapag-Lloyd
+  - Heidelberg Materials
+  - Continental
+  - Schaeffler
+  - ZF Friedrichshafen
+  - ZF Group
+  - Audi
+  - Phoenix Pharma

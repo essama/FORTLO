@@ -1,63 +1,22 @@
-# FORTLO Email Outreach Docker Setup
+# FORTLO Docker
 
-## Quick Start
+One container runs the outreach sender (`app3.py`) and the customer CRM UI (`crm_app.py` on port 8000).
 
-### 1. Build the Docker image
+## Run on the EC2 host
+
 ```bash
-docker build -t fortlo-outreach .
+cd /home/ec2-user/FORTLO
+touch do_not_email.txt
+sudo docker compose up -d --build
 ```
 
-### 2. Prepare your environment
-Create a `.env` file in the project root with your credentials:
-```
-TENANT_ID=your_tenant_id
-CLIENT_ID=your_client_id
-SENDER_UPN=your_email@company.com
-CLIENT_SECRET=your_client_secret
-CSV_PATH=data/mdg_high_intent.csv
-DAILY_LIMIT=50
-```
+UI: `http://127.0.0.1:8000/customers`
 
-### 3. Prepare data directory
-Create a `data/` folder and place your CSV file:
-```
-data/
-  mdg_high_intent.csv
-```
+## What the container does
 
-### 4. Run with Docker Compose
-```bash
-docker-compose up
-```
+- CRM UI with filters (ICP, campaign, phase, unsent, sent, email status).
+- Persistent email sender. It does not exit when the daily company cap is hit.
+- On start, and every Berlin morning (07:30), it emails `SENDER_UPN` with remaining contacts until the next refuel.
+- If the sendable list is empty it sends one “refuel required” Outlook mail per day, fetches up to 100 Head of ERP contacts from Apollo in the Bechtle €5–10bn German band, then checks again later if still empty.
 
-Or run standalone:
-```bash
-docker run -it \
-  --env-file .env \
-  -v $(pwd)/data:/app/data:ro \
-  -v $(pwd)/db:/app/db \
-  -v $(pwd)/logs:/app/logs \
-  fortlo-outreach
-```
-
-## Volumes
-- `.env` - Read-only environment configuration
-- `data/` - CSV input files (read-only)
-- `db/` - SQLite database output (persists on host)
-- `logs/` - Log files (persists on host)
-
-## Debugging
-To run bash inside container:
-```bash
-docker run -it --entrypoint bash fortlo-outreach
-```
-
-Or with docker-compose:
-```bash
-docker-compose run fortlo-email bash
-```
-
-## Notes
-- Change `CSV_PATH` in `.env` to match your mounted data directory structure
-- Database (`outreach_log.sqlite`) will be created in `/app/db` (mapped to `./db` on host)
-- Logs written to `/app/logs` (mapped to `./logs` on host)
+Required in `.env`: `TENANT_ID`, `CLIENT_ID`, `SENDER_UPN`, `APOLLO_API_KEY`, `DATABASE_URL=sqlite:///fortlo.db`. Optional: `NOTIFY_EMAIL`, `CLIENT_SECRET`, `DAILY_LIMIT`.

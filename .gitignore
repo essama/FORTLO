@@ -47,3 +47,11 @@ Thumbs.db
 outreach_log.sqlite
 msal_token_cache.json
 logger/
+
+# Data, state and backups (kept on the server, not in git)
+.bak*/
+*.bak-*
+fortlo.db.bak*
+leadgen_state/
+accounts.csv
+do_not_email.txt

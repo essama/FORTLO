@@ -61,6 +61,21 @@ def ensure_customer_schema() -> None:
         alter_statements.append("ALTER TABLE customers ADD COLUMN last_client_status TEXT")
     if "client_phase" not in existing_columns:
         alter_statements.append("ALTER TABLE customers ADD COLUMN client_phase VARCHAR(50)")
+    for col, ddl in (
+        ("domain", "ALTER TABLE customers ADD COLUMN domain VARCHAR(255)"),
+        ("legal_name", "ALTER TABLE customers ADD COLUMN legal_name VARCHAR(255)"),
+        ("revenue_year", "ALTER TABLE customers ADD COLUMN revenue_year INTEGER"),
+        ("size_band", "ALTER TABLE customers ADD COLUMN size_band VARCHAR(50)"),
+        ("icp_status", "ALTER TABLE customers ADD COLUMN icp_status VARCHAR(50)"),
+        ("exclusion_reason", "ALTER TABLE customers ADD COLUMN exclusion_reason TEXT"),
+        ("score_notes", "ALTER TABLE customers ADD COLUMN score_notes TEXT"),
+        ("apollo_org_id", "ALTER TABLE customers ADD COLUMN apollo_org_id VARCHAR(64)"),
+        ("linkedin_url", "ALTER TABLE customers ADD COLUMN linkedin_url VARCHAR(255)"),
+        ("source_urls_json", "ALTER TABLE customers ADD COLUMN source_urls_json TEXT"),
+        ("suggested_titles_json", "ALTER TABLE customers ADD COLUMN suggested_titles_json TEXT"),
+    ):
+        if col not in existing_columns:
+            alter_statements.append(ddl)
 
     if not alter_statements:
         return
@@ -70,7 +85,32 @@ def ensure_customer_schema() -> None:
             connection.execute(text(statement))
 
 
+def ensure_contact_schema() -> None:
+    inspector = inspect(engine)
+    if "contacts" not in inspector.get_table_names():
+        return
+    existing_columns = {column["name"] for column in inspector.get_columns("contacts")}
+    alter_statements = []
+    for col, ddl in (
+        ("apollo_person_id", "ALTER TABLE contacts ADD COLUMN apollo_person_id VARCHAR(64)"),
+        ("seniority", "ALTER TABLE contacts ADD COLUMN seniority VARCHAR(80)"),
+        ("email_status", "ALTER TABLE contacts ADD COLUMN email_status VARCHAR(80)"),
+        ("linkedin_url", "ALTER TABLE contacts ADD COLUMN linkedin_url VARCHAR(255)"),
+        ("city", "ALTER TABLE contacts ADD COLUMN city VARCHAR(100)"),
+        ("country", "ALTER TABLE contacts ADD COLUMN country VARCHAR(100)"),
+        ("lawful_basis", "ALTER TABLE contacts ADD COLUMN lawful_basis VARCHAR(80)"),
+    ):
+        if col not in existing_columns:
+            alter_statements.append(ddl)
+    if not alter_statements:
+        return
+    with engine.begin() as connection:
+        for statement in alter_statements:
+            connection.execute(text(statement))
+
+
 ensure_customer_schema()
+ensure_contact_schema()
 
 app = FastAPI(title="CRM UI")
 templates = Jinja2Templates(directory="templates")
@@ -214,10 +254,14 @@ def list_contacts(
     request: Request,
     q: str = Query(default="", description="Search text (name/email/title)"),
     customer_id: str = Query(default="", description="Filter by customer UUID"),
+    sent: str = Query(default="", description="Filter by sent field: yes | no | all"),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=5, le=200),
 ):
     q = (q or "").strip()
+    sent = (sent or "").strip().lower()
+    if sent in {"all", "*"}:
+        sent = ""
     cust_uuid = None
     if customer_id.strip():
         try:
@@ -228,6 +272,8 @@ def list_contacts(
     with SessionLocal() as db:
         db: Session
         from sqlalchemy.orm import joinedload
+        from sqlalchemy import exists
+
         stmt = select(Contact).options(joinedload(Contact.customer))
         if cust_uuid:
             stmt = stmt.where(Contact.customer_id == cust_uuid)
@@ -241,6 +287,15 @@ def list_contacts(
                     Contact.job_title.ilike(like),
                 )
             )
+        sent_exists = exists().where(EmailLog.contact_id == Contact.id)
+        if sent in {"yes", "sent", "true", "1"}:
+            sent = "yes"
+            stmt = stmt.where(sent_exists)
+        elif sent in {"no", "unsent", "false", "0"}:
+            sent = "no"
+            stmt = stmt.where(~sent_exists)
+        else:
+            sent = ""
         count_stmt = select(func.count()).select_from(stmt.subquery())
         total = db.execute(count_stmt).scalar_one()
 
@@ -249,7 +304,7 @@ def list_contacts(
         offset = (page - 1) * page_size
 
         stmt = stmt.order_by(Contact.last_name, Contact.first_name).offset(offset).limit(page_size)
-        contacts = db.execute(stmt).scalars().all()
+        contacts = db.execute(stmt).unique().scalars().all()
 
         # email log counts for these contacts
         sent_counts = {}
@@ -268,6 +323,7 @@ def list_contacts(
             "sent_counts": sent_counts,
             "q": q,
             "customer_id": customer_id,
+            "sent": sent,
             "page": page,
             "page_size": page_size,
             "total": total,

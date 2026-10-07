@@ -115,6 +115,17 @@ class Customer(Base, TimestampMixin, TenantMixin):
     # Firmographics
     employee_count: Mapped[Optional[int]] = mapped_column(Integer)
     annual_revenue: Mapped[Optional[float]] = mapped_column(Float)
+    domain: Mapped[Optional[str]] = mapped_column(String(255), index=True)
+    legal_name: Mapped[Optional[str]] = mapped_column(String(255))
+    revenue_year: Mapped[Optional[int]] = mapped_column(Integer)
+    size_band: Mapped[Optional[str]] = mapped_column(String(50))
+    icp_status: Mapped[Optional[str]] = mapped_column(String(50), index=True)
+    exclusion_reason: Mapped[Optional[str]] = mapped_column(Text)
+    score_notes: Mapped[Optional[str]] = mapped_column(Text)
+    apollo_org_id: Mapped[Optional[str]] = mapped_column(String(64))
+    linkedin_url: Mapped[Optional[str]] = mapped_column(String(255))
+    source_urls_json: Mapped[Optional[str]] = mapped_column(Text)
+    suggested_titles_json: Mapped[Optional[str]] = mapped_column(Text)
 
     # CRM Flags (for SAP MDG scoring)
     is_regulated_industry: Mapped[bool] = mapped_column(
@@ -183,6 +194,13 @@ class Contact(Base, TimestampMixin, TenantMixin):
     email: Mapped[str] = mapped_column(String(255), nullable=False)
     job_title: Mapped[Optional[str]] = mapped_column(String(150))
     phone: Mapped[Optional[str]] = mapped_column(String(50))
+    apollo_person_id: Mapped[Optional[str]] = mapped_column(String(64), index=True)
+    seniority: Mapped[Optional[str]] = mapped_column(String(80))
+    email_status: Mapped[Optional[str]] = mapped_column(String(80))
+    linkedin_url: Mapped[Optional[str]] = mapped_column(String(255))
+    city: Mapped[Optional[str]] = mapped_column(String(100))
+    country: Mapped[Optional[str]] = mapped_column(String(100))
+    lawful_basis: Mapped[Optional[str]] = mapped_column(String(80))
 
     # free-form metadata for enrichments / extra info
     metadata_json: Mapped[Optional[dict]] = mapped_column(JSON)

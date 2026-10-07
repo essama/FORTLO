@@ -8,7 +8,7 @@
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; margin: 24px; }
       .row { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
       label { display:block; font-size: 12px; color:#444; margin-bottom:6px; }
-      input { padding: 10px; border:1px solid #ddd; border-radius: 10px; min-width: 240px; }
+      input, select { padding: 10px; border:1px solid #ddd; border-radius: 10px; min-width: 240px; background:#fff; }
       button { padding: 10px 14px; border:0; border-radius: 10px; cursor:pointer; }
       button.primary { background:#111; color:#fff; }
       button.ghost { background:#f3f3f3; }
@@ -25,9 +25,14 @@
       .nowrap { white-space: nowrap; }
       .small { font-size: 12px; color: #666; }
       .empty { padding: 18px; background:#fafafa; border: 1px dashed #ddd; border-radius: 14px; margin-top: 16px; }
+      .nav { display:flex; gap:10px; margin-bottom: 16px; }
     </style>
   </head>
   <body>
+    <div class="nav">
+      <a class="linkbtn" href="/customers">Customers</a>
+      <a class="linkbtn active" href="/contacts">Contacts</a>
+    </div>
     <h1>Contacts</h1>
 
     <form method="get" action="/contacts">
@@ -41,11 +46,44 @@
           <input name="customer_id" value="{{ customer_id }}" placeholder="optional customer UUID" />
         </div>
         <div>
+          <label>Sent</label>
+          <select name="sent" style="min-width:140px">
+            <option value="" {% if not sent %}selected{% endif %}>All</option>
+            <option value="yes" {% if sent == 'yes' %}selected{% endif %}>Sent</option>
+            <option value="no" {% if sent == 'no' %}selected{% endif %}>Not sent</option>
+          </select>
+        </div>
+        <div>
+          <label>Email status</label>
+          <select name="email_status" style="min-width:160px">
+            <option value="" {% if not email_status %}selected{% endif %}>All</option>
+            <option value="verified" {% if email_status == 'verified' %}selected{% endif %}>Verified</option>
+            <option value="likely to engage" {% if email_status == 'likely to engage' %}selected{% endif %}>Likely to engage</option>
+          </select>
+        </div>
+        <div>
+          <label>Campaign</label>
+          <select name="campaign" style="min-width:140px">
+            <option value="" {% if not campaign %}selected{% endif %}>All</option>
+            <option value="in" {% if campaign == 'in' %}selected{% endif %}>In campaign</option>
+            <option value="out" {% if campaign == 'out' %}selected{% endif %}>Out of campaign</option>
+          </select>
+        </div>
+        <div>
+          <label>ICP</label>
+          <select name="icp_status" style="min-width:150px">
+            <option value="" {% if not icp_status %}selected{% endif %}>All</option>
+            {% for status in icp_status_options %}
+              <option value="{{ status }}" {% if icp_status == status %}selected{% endif %}>{{ status }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
           <label>Page size</label>
           <input name="page_size" value="{{ page_size }}" style="min-width:120px" />
         </div>
         <div>
-          <button class="primary" type="submit">Apply</button>
+          <button class="primary" type="submit">Filter</button>
           <a class="linkbtn" href="/contacts">Reset</a>
         </div>
       </div>
@@ -77,7 +115,14 @@
               <td>{{ c.email }}</td>
               <td>{{ c.job_title or "" }}</td>
               <td><a href="/customers?q=&tenant_id=&page_size=20&customer_id={{ c.customer_id }}">{{ c.customer.name if c.customer else '' }}</a></td>
-              <td>{{ sent_counts.get(c.id, 0) }}</td>
+              <td>
+                {% set nsent = sent_counts.get(c.id, 0) %}
+                {% if nsent %}
+                  <span class="pill">Yes · {{ nsent }}</span>
+                {% else %}
+                  <span class="small">No</span>
+                {% endif %}
+              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -88,15 +133,16 @@
           {% set prev_page = page - 1 %}
           {% set next_page = page + 1 %}
 
+          {% set qs = 'q=' ~ q ~ '&customer_id=' ~ customer_id ~ '&sent=' ~ sent ~ '&email_status=' ~ email_status ~ '&campaign=' ~ campaign ~ '&icp_status=' ~ icp_status ~ '&page_size=' ~ page_size %}
           <a class="linkbtn {{ 'disabled' if page <= 1 else '' }}"
-             href="/contacts?q={{ q }}&customer_id={{ customer_id }}&page={{ prev_page }}&page_size={{ page_size }}">
+             href="/contacts?{{ qs }}&page={{ prev_page }}">
             ← Prev
           </a>
 
           {% for p in range(1, pages + 1) %}
             {% if p == 1 or p == pages or (p >= page - 2 and p <= page + 2) %}
               <a class="linkbtn {{ 'active' if p == page else '' }}"
-                 href="/contacts?q={{ q }}&customer_id={{ customer_id }}&page={{ p }}&page_size={{ page_size }}">
+                 href="/contacts?{{ qs }}&page={{ p }}">
                 {{ p }}
               </a>
             {% elif p == page - 3 or p == page + 3 %}
@@ -105,7 +151,7 @@
           {% endfor %}
 
           <a class="linkbtn {{ 'disabled' if page >= pages else '' }}"
-             href="/contacts?q={{ q }}&customer_id={{ customer_id }}&page={{ next_page }}&page_size={{ page_size }}">
+             href="/contacts?{{ qs }}&page={{ next_page }}">
             Next →
           </a>
         </div>

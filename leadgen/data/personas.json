@@ -1,0 +1,29 @@
+{
+  "purpose": "Persona copy. Accounts and named people are filled in by code from the profile, historical_contacts.json and the CRM. The model may rewrite cares_about and message_angle when XAI_API_KEY is set.",
+  "personas": [
+    {
+      "type": "Decision-maker",
+      "match_titles": ["architekt", "architect", "lead"],
+      "title_patterns": "Head of Master Data, MDG Program Lead, Leiter Stammdaten, S/4 program owner, Head of ERP / SAP",
+      "department": "Master data, IT architecture, or the S/4 transformation office",
+      "cares_about": "A governed golden record, a rollout that survives cutover, and business rules and mass-change processes the plants can reuse.",
+      "message_angle": "Lead with the program outcome already delivered for a similar account: SAP MDG architecture, business rules, and replication into S/4. Name the won account in the same sector. Skip a generic digital-transformation opening."
+    },
+    {
+      "type": "Internal champion",
+      "match_titles": ["data manager", "consultant", "entwickler", "developer", "spezialist", "specialist"],
+      "title_patterns": "Internal MDG lead, master-data team lead, project manager who sponsors the external architect; master-data stewards and MDG developers who live with the result",
+      "department": "Master-data team, MDG development team, or project delivery",
+      "cares_about": "A rule set the team can extend, search and duplicate check that return the right record, fewer manual steps in the change request, and a clean handover.",
+      "message_angle": "Talk about the daily record and the handover, not the strategy: duplicate check, derivation, replication errors, and a framework the team keeps after the consultant leaves."
+    },
+    {
+      "type": "Agency account manager",
+      "match_titles": [],
+      "title_patterns": "Account manager, recruiter, or delivery manager at an SAP staffing or consulting firm",
+      "department": "Staffing / delivery sales",
+      "cares_about": "A consultant who fills an open SAP MDG seat fast, is available on the stated dates, and gets extended by the end customer.",
+      "message_angle": "Send availability, day rate, and the last three MDG engagements with dates. Name end customers the agency already serves when the profile shows them."
+    }
+  ]
+}

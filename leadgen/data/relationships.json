@@ -1,0 +1,47 @@
+{
+  "purpose": "Recruiting company (payer) to end customer links that the profile line does not state. 'contract' links are named by a contract; 'suggested' links are date overlap or a project note and stay unconfirmed.",
+  "contract": [
+    {
+      "recruiting_company": "Softup Technologies GmbH",
+      "end_customer": "ebm-papst",
+      "confidence": 0.98,
+      "evidence": "Projektvertrag 2026-SOF-0079 names Softup Technologies GmbH as Auftraggeber and ebm-papst GmbH as Endkunde. The July 2026 timesheet repeats that end customer."
+    }
+  ],
+  "suggested": [
+    {
+      "recruiting_company": "Mindsquare AG",
+      "end_customer": "Jungheinrich",
+      "confidence": 0.8,
+      "evidence": "Mindsquare invoices run Feb 2024 through Jan 2025, the only invoices inside the Jungheinrich window Feb 2024–Feb 2025. The invoices do not name Jungheinrich."
+    },
+    {
+      "recruiting_company": "Vicoland",
+      "end_customer": "Bechtle",
+      "confidence": 0.7,
+      "evidence": "A Vicoland project note says 'Bechtle Hotline'. Invoice 2026-1005 (2026-07-04, SAP MDG) falls inside Bechtle Mar 2026–Sep 2026."
+    },
+    {
+      "recruiting_company": "Ratbacher GmbH",
+      "end_customer": "Bosch (ETAS GmbH)",
+      "confidence": 0.55,
+      "evidence": "Ratbacher invoice 2025-1009 is labeled 'Product MDM Beratung' during the ETAS product-master engagement. Later Ratbacher invoices also overlap Bechtle and ebm-papst, so the link is not exclusive."
+    },
+    {
+      "recruiting_company": "Red Global Limited",
+      "end_customer": "Helleniq Energy",
+      "confidence": 0.4,
+      "evidence": "Red Global invoices run Feb 2025 through Jun 2025, inside Helleniq Energy Jan 2025–Aug 2025. Project files for that engagement sit under Deloitte Greece. No contract names both parties."
+    }
+  ],
+  "not_staffing": ["abis"],
+  "delivery_partners": [
+    {
+      "name": "Markus Reitberger",
+      "title": "Principal PLM Consultant / Project Manager",
+      "org": "Atos Secure Digital GmbH",
+      "end_customer": "ebm-papst",
+      "source": "July 2026 timesheet, named as Ansprechpartner on the ebm-papst engagement. Another vendor on the account, not a buyer inside ebm-papst."
+    }
+  ]
+}

@@ -59,8 +59,6 @@ def send_notification_custom(message):
     return
 
 
-send_notification_custom(f'hi there boss')
-
 import base64
 from io import BytesIO
 

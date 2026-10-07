@@ -1,19 +1,37 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  fortlo-app3:
+  fortlo:
     build: .
-    container_name: fortlo-app3
-    command: python app3.py
+    container_name: fortlo
+    restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
-      - CSV_PATH=/app/apollo_mdg_leads.csv
+      - DATABASE_URL=sqlite:///fortlo.db
       - DB_PATH=/app/outreach_log.sqlite
-      - DATABASE_URL=sqlite:////app/fortlo.db
+      - TOKEN_CACHE_FILE=/app/msal_token_cache.json
+      - DAILY_LIMIT=${DAILY_LIMIT:-50}
+      - LEADGEN_HOST=0.0.0.0
+      - LEADGEN_PORT=8010
+      - LEADGEN_STATE_DIR=/app/leadgen_state
+      - LEADGEN_PROFILE=/app/leadgen_state/Profil.docx
+      - LEADGEN_CV=/app/leadgen_state/Essam_Azzam_CV.docx
+      - LEADGEN_INVOICE_DB=/app/invoices.db
+      - LEADGEN_FORTLO_DB=/app/fortlo.db
+    ports:
+      - "8000:8000"
+      # Leadgen page: host loopback only. Open with an SSH tunnel.
+      - "127.0.0.1:8010:8010"
     volumes:
-      # Mount project source for live edits.
-      - .:/app
-      - ./.env:/app/.env:ro
-      # Force container DB files to be exactly the same host files.
       - ./fortlo.db:/app/fortlo.db
       - ./outreach_log.sqlite:/app/outreach_log.sqlite
+      - ./.env:/app/.env:ro
+      - ./msal_token_cache.json:/app/msal_token_cache.json
+      - ./logger:/app/logger
+      - ./forte4_logo.png:/app/forte4_logo.png:ro
+      - ./sender_photo.png:/app/sender_photo.png:ro
+      - ./do_not_email.txt:/app/do_not_email.txt:ro
+      - ./leadgen_state:/app/leadgen_state
+      - ../INVOICE_PRINTER_F4/invoices.db:/app/invoices.db:ro

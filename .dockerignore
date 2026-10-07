@@ -27,3 +27,7 @@ msal_token_cache.json
 logs/
 db/
 data/
+*.bak*
+app3_ui_remote.py
+databases_remote.py
+requirements_remote.txt

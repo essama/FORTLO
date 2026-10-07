@@ -1,0 +1,52 @@
+{
+  "purpose": "Decision-makers on historical end customers. Used only to analyze company profiles. Not an email list. No email addresses are stored.",
+  "contacts": [
+    {
+      "company": "Jungheinrich",
+      "end_customer": "Jungheinrich",
+      "name": "Holger Trompeter",
+      "role": "Decision-maker",
+      "source": "Named as the historical decision-maker at Jungheinrich. No email was provided."
+    },
+    {
+      "company": "LIXIL",
+      "end_customer": "LIXIL",
+      "name": "Manvi Goel",
+      "role": "Decision-maker",
+      "source": "Named as a historical decision-maker at LIXIL. No email was provided."
+    },
+    {
+      "company": "LIXIL",
+      "end_customer": "LIXIL",
+      "name": "Jimmy Tan",
+      "role": "Decision-maker",
+      "source": "Named as a historical decision-maker at LIXIL. No email was provided."
+    },
+    {
+      "company": "ebm-papst",
+      "end_customer": "ebm-papst",
+      "name": "Yannic Bahr",
+      "role": "Decision-maker",
+      "source": "Named as the historical decision-maker at ebm-papst. No email was provided."
+    },
+    {
+      "company": "Bechtle",
+      "end_customer": "Bechtle",
+      "name": "Gernot Hegen",
+      "role": "Decision-maker",
+      "source": "Named as the historical decision-maker at Bechtle. No email was provided."
+    },
+    {
+      "company": "ETAS",
+      "end_customer": "Bosch (ETAS GmbH)",
+      "name": "Franz Kreher",
+      "role": "Decision-maker",
+      "source": "Named as the historical decision-maker at ETAS. Tied to the Bosch (ETAS GmbH) engagement. No email was provided."
+    },
+    {"company": "Deloitte Greece", "end_customer": "Helleniq Energy", "name": "Alexandros", "role": "Decision-maker", "source": "Named by Essam as a Deloitte Greece decision-maker (first name only). Helleniq Energy project files sit under Deloitte Greece."},
+    {"company": "Deloitte Greece", "end_customer": "Helleniq Energy", "name": "Dimitris", "role": "Decision-maker", "source": "Named by Essam as a Deloitte Greece decision-maker (first name only)."},
+    {"company": "Deloitte Greece", "end_customer": "Helleniq Energy", "name": "Michael", "role": "Decision-maker", "source": "Named by Essam as a Deloitte Greece decision-maker (first name only)."},
+    {"company": "Deloitte Greece", "end_customer": "Helleniq Energy", "name": "Alithia Diaktos", "role": "Decision-maker", "source": "Named by Essam as a Deloitte Greece decision-maker."},
+    {"company": "Deloitte Greece", "end_customer": "Helleniq Energy", "name": "Eftichia Pilgou", "role": "Decision-maker", "source": "Named by Essam as a Deloitte Greece decision-maker."}
+  ]
+}

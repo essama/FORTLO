@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ICP from closed customers</title>
+  <style>
+    body { margin: 0; font: 16px/1.45 Georgia, "Times New Roman", serif; color: #1c1917; background: #f6f3ee; }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 64px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { font-size: 20px; margin: 32px 0 8px; }
+    p { margin: 8px 0; }
+    .meta { color: #57534e; font-family: Consolas, monospace; font-size: 13px; }
+    .banner { background: #fff; border: 1px solid #d6d3d1; padding: 12px 14px; margin: 16px 0; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-family: Consolas, "Segoe UI", sans-serif; font-size: 13px; }
+    th, td { border-bottom: 1px solid #e7e5e4; text-align: left; vertical-align: top; padding: 8px; }
+    th { background: #292524; color: #fafaf9; font-weight: 600; }
+    .card { background: #fff; border: 1px solid #d6d3d1; padding: 14px 16px; margin: 12px 0; }
+    button { font: 14px/1 Consolas, monospace; background: #292524; color: #fff; border: 0; padding: 10px 14px; cursor: pointer; }
+    .low { color: #9f1239; }
+    .pursue { color: #166534; font-weight: 600; }
+    .tag { font: 11px Consolas, monospace; background: #e7e5e4; padding: 1px 5px; border-radius: 3px; }
+    .lede { font-size: 19px; background: #fff; border-left: 4px solid #292524; padding: 10px 14px; }
+    @media (prefers-color-scheme: dark) {
+      body { color: #e7e5e4; background: #1c1917; }
+      .banner, .card, table, .lede { background: #292524; border-color: #44403c; }
+      th { background: #0c0a09; }
+      td, th { border-color: #44403c; }
+      .meta { color: #a8a29e; }
+      .tag { background: #44403c; }
+      .low { color: #fb7185; } .pursue { color: #4ade80; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>ICP from closed customers</h1>
+  <p class="meta">Generated {{ r.generated_at }}. CRM source: {{ r.sources.crm }}. Writes back to CRM: {{ r.sources.crm_write }}. Model: {{ r.model.model }} ({{ r.model.status }}). {{ r.model.detail }}</p>
+  <form method="post" action="/refresh"><button type="submit">Refresh ICP</button> <a href="/search">Find companies in plain English &rarr;</a></form>
+
+  {% if r.gaps %}
+  <div class="banner">
+    <strong>What is missing</strong>
+    <ul>
+      {% for gap in r.gaps %}<li>{{ gap }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <h2>1. Recruiting company to end customer</h2>
+  <p>Recruiting companies come from the EC2 clients table. End customers come from the profile. Confirmed links are the ones the profile or a contract names.</p>
+  <table>
+    <thead>
+      <tr><th>Status</th><th>Recruiting company</th><th>End customer</th><th>Confidence</th><th>Invoiced net EUR</th><th>Evidence</th></tr>
+    </thead>
+    <tbody>
+      {% for row in r.relationships.confirmed %}
+      <tr>
+        <td>Confirmed</td>
+        <td>{{ row.recruiting_company }}{% if row.recruiting_contact %}<br>{{ row.recruiting_contact }}{% endif %}</td>
+        <td>{{ row.end_customer }}{% if row.end_customer_dates %}<br>{{ row.end_customer_dates }}{% endif %}</td>
+        <td>{{ row.confidence }}</td>
+        <td>{{ row.billing.net_eur }} ({{ row.billing.invoice_count }})</td>
+        <td>{{ row.evidence }}</td>
+      </tr>
+      {% endfor %}
+      {% for row in r.relationships.suggested %}
+      <tr>
+        <td>Unconfirmed</td>
+        <td>{{ row.recruiting_company }}</td>
+        <td>{{ row.end_customer }}</td>
+        <td>{{ row.confidence }}</td>
+        <td>{{ row.billing.net_eur }}</td>
+        <td>{{ row.evidence }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if r.relationships.unresolved_clients or r.relationships.unresolved_customers %}
+  <div class="card">
+    <strong>Unresolved</strong>
+    <ul>
+      {% for row in r.relationships.unresolved_clients %}
+      <li>{{ row.company_name }}: {{ row.reason }}</li>
+      {% endfor %}
+      {% for row in r.relationships.unresolved_customers %}
+      <li>{{ row.end_customer }} ({{ row.dates }}): {{ row.reason }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="card">
+    <strong>Clients from the profile on the CV</strong>
+    <p>Present: {{ r.cv_check.present_on_cv | join(", ") or "none" }}</p>
+    <p>Missing: {{ r.cv_check.missing_on_cv | join(", ") or "none" }}</p>
+    <p class="meta">{{ r.cv_check.cv_path }}</p>
+  </div>
+
+  <h2>2. Ideal customer profile</h2>
+  <p class="lede">{{ r.icp.summary_line }}</p>
+  <p>{{ r.icp.narrative }}</p>
+  {% if r.icp.won_sectors %}
+  <p><strong>Won sectors:</strong>
+    {% for sector, names in r.icp.won_sectors.items() %}{{ sector }} ({{ names | join(", ") }}){% if not loop.last %}; {% endif %}{% endfor %}
+  </p>
+  {% endif %}
+
+  <h3>Channel: agencies that pay the invoices</h3>
+  <table>
+    <thead><tr><th>Agency</th><th>Contact</th><th>Invoices</th><th>Net EUR</th><th>Window</th><th>Median unit price</th><th>End customers</th></tr></thead>
+    <tbody>
+      {% for row in r.icp.channel %}
+      <tr>
+        <td>{{ row.agency }}</td><td>{{ row.contact }}</td><td>{{ row.invoices }}</td>
+        <td>{{ "{:,.0f}".format(row.net_eur) }}</td><td>{{ row.first }} to {{ row.last }}</td>
+        <td>{{ "{:,.0f}".format(row.median_unit_price) if row.median_unit_price else "" }}</td>
+        <td>{{ row.end_customers | join(", ") or "not linked" }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7">No invoices loaded.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p>{{ r.icp.disqualifier_note }}</p>
+  {% if r.icp.summary_quote %}<p class="meta">Summary used: {{ r.icp.summary_quote }}</p>{% endif %}
+  <table>
+    <thead>
+      <tr><th>Field</th><th>What it shows</th><th>Accounts</th><th>Confidence</th></tr>
+    </thead>
+    <tbody>
+      {% for row in r.icp.evidence %}
+      <tr>
+        <td>{{ row.field }}</td>
+        <td>{{ row.detail }}</td>
+        <td>{{ row.accounts }}</td>
+        <td>{{ row.confidence }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if r.icp.triggers %}
+  <p><strong>Triggers on wins</strong></p>
+  <ul>
+    {% for row in r.icp.triggers %}
+    <li>{{ row.label }}: {{ row.count }} of {{ row.of }}. {{ row.note }} Accounts: {{ row.accounts | join(", ") }}.</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <h2>Historical client contacts</h2>
+  <p>These people are decision-makers on past end customers. They are used for the company profile. They are not email contacts, and no email address is stored.</p>
+  <table>
+    <thead>
+      <tr><th>Company</th><th>End customer</th><th>Decision-maker</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      {% for row in r.historical_contacts %}
+      <tr>
+        <td>{{ row.company }}</td>
+        <td>{{ row.end_customer }}</td>
+        <td>{{ row.name or "No person named" }}</td>
+        <td>{{ row.source }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>3. Personas on the won accounts</h2>
+  {% for persona in r.personas %}
+  <div class="card">
+    <h3>{{ persona.type }}</h3>
+    <p><strong>Accounts:</strong> {{ persona.tied_accounts | join(", ") or "none yet" }}</p>
+    <p><strong>Title patterns:</strong> {{ persona.title_patterns }}</p>
+    <p><strong>Department:</strong> {{ persona.department }}</p>
+    <p><strong>What they care about:</strong> {{ persona.cares_about }}</p>
+    <p><strong>Objections:</strong> {{ persona.objections }}</p>
+    <p><strong>Message angle:</strong> {{ persona.message_angle }}</p>
+    <p><strong>Named people:</strong>
+      {% if persona.named_people %}
+        {% for person in persona.named_people %}{{ person.name }}, {{ person.title }}, {{ person.org }} ({{ person.end_customer }}). {% endfor %}
+      {% else %}none{% endif %}
+    </p>
+    <p class="meta">{{ persona.named_gap }}</p>
+  </div>
+  {% endfor %}
+
+  <h2>4. Ranked leads</h2>
+  <p>{{ r.lead_count }} accounts scored; <strong>{{ r.pursue_count }}</strong> reach {{ r.pursue_at }} and are marked pursue. Showing {{ r.leads | length }}.
+    Spread: {% for b in r.score_spread %}{{ b.band }}: {{ b.count }}{% if not loop.last %} · {% endif %}{% endfor %}.
+    {% if r.enrichment.requested %}This refresh asked the model to classify {{ r.enrichment.requested }} blank industries ({{ r.enrichment.classified }} classified).{% endif %}
+    <span class="tag">AI</span> marks a field the model inferred.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Account</th><th>Score</th><th>Sector</th><th>Matched</th><th>Missing</th>
+        <th>Persona</th><th>Next action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in r.leads %}
+      <tr>
+        <td>{{ row.account }}{% if row.domain %}<br><span class="meta">{{ row.domain }}</span>{% endif %}</td>
+        <td class="{% if row.decision == 'pursue' %}pursue{% elif row.score < 40 %}low{% endif %}">{{ row.score }}<br>{{ row.decision }}</td>
+        <td>{{ row.sector }}{% if row.ai_inferred %} <span class="tag">AI</span>{% endif %}<br><span class="meta">{{ row.industry }}</span></td>
+        <td>{{ row.matched_traits | join("; ") }}</td>
+        <td>{{ row.missing_data | join("; ") }}</td>
+        <td>{{ row.recommended_persona }}</td>
+        <td>{{ row.next_action }}{% if row.outreach %}<br><br>{{ row.outreach }}{% if row.outreach_by == "model" %} <span class="tag">AI</span>{% endif %}{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Non-matching account</h2>
+  <table>
+    <thead><tr><th>Account</th><th>Score</th><th>Reason</th></tr></thead>
+    <tbody>
+      {% for row in r.probes %}
+      <tr>
+        <td>{{ row.account }}</td>
+        <td class="{% if row.score < 40 %}low{% endif %}">{{ row.score }}</td>
+        <td>{{ row.reason }}</td>
+      </tr>
+      {% endfor %}
+      {% for row in r.low_scores[:5] %}
+      <tr>
+        <td>{{ row.account }}</td>
+        <td class="low">{{ row.score }}</td>
+        <td>{{ row.reason }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

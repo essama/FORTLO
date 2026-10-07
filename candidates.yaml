@@ -1,0 +1,602 @@
+# Curated German account universe for Stage 1.
+# Every revenue_eur figure has at least one source URL. No invented numbers.
+# Status is assigned by build_accounts.py (not by this file).
+
+candidates:
+  # --- Bechtle analogue: do not qualify as a target ---
+  - name: Bechtle
+    legal_name: Bechtle AG
+    domain: bechtle.com
+    website: https://www.bechtle.com
+    city: Neckarsulm
+    country: Germany
+    revenue_eur: 6405874000
+    revenue_year: 2025
+    employees: 16360
+    industry: it / system house
+    source_urls:
+      - https://reports.bechtle.com/annual-report/2025
+      - https://www.bechtle.com/dam/jcr:03890ff2-5b9a-4176-979f-95a170f38fac/pr-bechtle-fy-2025.pdf
+
+  # --- Qualified band €5–10bn, DE HQ, included sectors ---
+  - name: Beiersdorf
+    legal_name: Beiersdorf AG
+    domain: beiersdorf.com
+    website: https://www.beiersdorf.com
+    city: Hamburg
+    country: Germany
+    revenue_eur: 9852000000
+    revenue_year: 2025
+    employees: 22399
+    industry: consumer / retail
+    source_urls:
+      - https://reports.beiersdorf.com/annual-report/2025
+      - https://www.beiersdorf.com/newsroom/press-information/all-press-releases/2026/03/02-full-year-results-2025-beiersdorf-grows-in-a-slowing-market-derma-outperforms
+      - https://www.beiersdorf.com/investor-relations/shares/factsheet
+
+  - name: B. Braun
+    legal_name: B. Braun SE
+    domain: bbraun.com
+    website: https://www.bbraun.com
+    city: Melsungen
+    country: Germany
+    revenue_eur: 9396400000
+    revenue_year: 2025
+    employees: 66821
+    industry: pharma / life sciences / medtech
+    source_urls:
+      - https://www.bbraun.com/en/about-us/company/facts-and-figures/annual-report.html
+      - https://www.bbraun.de/de/ueber-uns/unternehmen/zahlen-und-fakten/geschaeftsbericht.html
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+
+  - name: Knorr-Bremse
+    legal_name: Knorr-Bremse AG
+    domain: knorr-bremse.com
+    website: https://www.knorr-bremse.com
+    city: Munich
+    country: Germany
+    revenue_eur: 7817000000
+    revenue_year: 2025
+    employees: 30913
+    industry: industrial engineering / automotive supplier
+    source_urls:
+      - https://ir.knorr-bremse.com/company-information
+      - https://newsroom.knorr-bremse.com/en/knorr-bremse-on-course-for-success-with-higher-profit-and-profitability/
+
+  - name: PUMA
+    legal_name: PUMA SE
+    domain: puma.com
+    website: https://www.puma.com
+    city: Herzogenaurach
+    country: Germany
+    revenue_eur: 7296200000
+    revenue_year: 2025
+    employees: 18488
+    industry: retail / consumer
+    source_urls:
+      - https://annual-report.puma.com/2025/en/combined-management-report/the-financial-year-2025-at-a-glance/index.html
+      - https://annual-report.puma.com/2025/en/additional-information/puma-year-on-year-comparison/index.html
+
+  - name: Dachser
+    legal_name: Dachser SE
+    domain: dachser.com
+    website: https://www.dachser.com
+    city: Kempten
+    country: Germany
+    revenue_eur: 8027000000
+    revenue_year: 2024
+    employees: 37300
+    industry: logistics
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: Rhenus
+    legal_name: Rhenus SE & Co. KG
+    domain: rhenus.com
+    website: https://www.rhenus.com
+    city: Holzwickede
+    country: Germany
+    revenue_eur: 8200000000
+    revenue_year: 2024
+    industry: logistics
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: Südzucker
+    legal_name: Südzucker AG
+    domain: suedzucker.de
+    website: https://www.suedzucker.de
+    city: Mannheim
+    country: Germany
+    revenue_eur: 9694000000
+    revenue_year: 2024
+    employees: 19284
+    industry: wholesale / food / consumer
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: HelloFresh
+    legal_name: HelloFresh SE
+    domain: hellofresh.com
+    website: https://www.hellofresh.com
+    city: Berlin
+    country: Germany
+    revenue_eur: 7661300000
+    revenue_year: 2024
+    employees: 21783
+    industry: retail / consumer / food
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: GEA
+    legal_name: GEA Group AG
+    domain: gea.com
+    website: https://www.gea.com
+    city: Düsseldorf
+    country: Germany
+    revenue_eur: 5422000000
+    revenue_year: 2024
+    employees: 18347
+    industry: industrial engineering / manufacturing
+    source_urls:
+      - https://www.eqs-news.com/media/document/73e76f89-6bce-4ae4-84c2-74c72133be46/assets/DE0006602006-Q2-2025-EQ-E-00.pdf
+      - https://www.meyer-industryresearch.de/wp-content/uploads/2025/11/TOP100-Maschinenbauunternehmen-in-Deutschland-2025.pdf
+
+  - name: Jungheinrich
+    legal_name: Jungheinrich AG
+    domain: jungheinrich.com
+    website: https://www.jungheinrich.com
+    city: Hamburg
+    country: Germany
+    revenue_eur: 5502000000
+    revenue_year: 2025
+    employees: 21438
+    industry: industrial engineering / logistics
+    source_urls:
+      - https://companiesmarketcap.com/annual-reports/35470.ar.en.2025.pdf
+
+  - name: Krones
+    legal_name: Krones AG
+    domain: krones.com
+    website: https://www.krones.com
+    city: Neutraubling
+    country: Germany
+    revenue_eur: 5663800000
+    revenue_year: 2025
+    employees: 21339
+    industry: industrial engineering / manufacturing
+    source_urls:
+      - https://www.krones.com/en/company/investor-relations/gb-2025-highlights.php
+      - https://www.krones.com/en/company/investor-relations/key-figures.php
+
+  - name: Voith
+    legal_name: Voith GmbH & Co. KGaA
+    domain: voith.com
+    website: https://voith.com
+    city: Heidenheim
+    country: Germany
+    revenue_eur: 5227000000
+    revenue_year: 2024
+    employees: 22243
+    industry: industrial engineering / energy
+    source_urls:
+      - https://www.meyer-industryresearch.de/wp-content/uploads/2025/11/TOP100-Maschinenbauunternehmen-in-Deutschland-2025.pdf
+      - https://www.technik-einkauf.de/technik/die-20-groessten-maschinen-und-anlagenbauer-deutschlands/1627491
+
+  - name: TRUMPF
+    legal_name: TRUMPF SE + Co. KG
+    domain: trumpf.com
+    website: https://www.trumpf.com
+    city: Ditzingen
+    country: Germany
+    revenue_eur: 5173000000
+    revenue_year: 2024
+    employees: 19018
+    industry: industrial engineering / manufacturing
+    source_urls:
+      - https://www.meyer-industryresearch.de/wp-content/uploads/2025/11/TOP100-Maschinenbauunternehmen-in-Deutschland-2025.pdf
+
+  - name: LANXESS
+    legal_name: LANXESS AG
+    domain: lanxess.com
+    website: https://lanxess.com
+    city: Cologne
+    country: Germany
+    revenue_eur: 5673000000
+    revenue_year: 2025
+    employees: 11709
+    industry: chemicals
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+      - https://www.vci.de/langfassungen-pdf/die-20-umsatzstaerksten-deutschen-chemieunternehmen.pdf
+
+  - name: Wacker Chemie
+    legal_name: Wacker Chemie AG
+    domain: wacker.com
+    website: https://www.wacker.com
+    city: Munich
+    country: Germany
+    revenue_eur: 5485000000
+    revenue_year: 2025
+    employees: 16467
+    industry: chemicals
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+      - https://www.vci.de/langfassungen-pdf/die-20-umsatzstaerksten-deutschen-chemieunternehmen.pdf
+
+  - name: HORNBACH
+    legal_name: HORNBACH Holding AG & Co. KGaA
+    domain: hornbach-holding.com
+    website: https://www.hornbach-holding.de
+    city: Bornheim
+    country: Germany
+    revenue_eur: 6433900000
+    revenue_year: 2025
+    employees: 25514
+    industry: retail
+    source_urls:
+      - https://www.hornbach-holding.de/en/company
+      - https://www.deraktionaer.de/nachricht/eqs-news-hornbach-gruppe-erzielt-solide-ergebnisse-und-setzt-auf-weiteres-wachstum-deutsch-525753.html
+
+  - name: Salzgitter
+    legal_name: Salzgitter AG
+    domain: salzgitter-ag.com
+    website: https://www.salzgitter-ag.com
+    city: Salzgitter
+    country: Germany
+    revenue_eur: 8981300000
+    revenue_year: 2025
+    industry: manufacturing / steel
+    source_urls:
+      - https://www.salzgitter-ag.com/fileadmin/finanzberichte/2025/gb2025/de/downloads/szag-gb2025-gesamt.pdf
+
+  - name: HELLA
+    legal_name: HELLA GmbH & Co. KGaA
+    domain: hella.com
+    website: https://www.hella.com
+    city: Lippstadt
+    country: Germany
+    revenue_eur: 8025000000
+    revenue_year: 2024
+    industry: automotive supplier
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: Dr. Oetker
+    legal_name: Dr. August Oetker KG
+    domain: oetker-gruppe.de
+    website: https://www.oetker-gruppe.de
+    city: Bielefeld
+    country: Germany
+    revenue_eur: 7086000000
+    revenue_year: 2024
+    employees: 28713
+    industry: consumer / food
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: MVV Energie
+    legal_name: MVV Energie AG
+    domain: mvv.de
+    website: https://www.mvv.de
+    city: Mannheim
+    country: Germany
+    revenue_eur: 7194000000
+    revenue_year: 2024
+    employees: 6649
+    industry: energy
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  # --- Clearly larger than Bechtle / over €10bn ---
+  - name: Covestro
+    legal_name: Covestro AG
+    domain: covestro.com
+    website: https://www.covestro.com
+    city: Leverkusen
+    country: Germany
+    revenue_eur: 12942000000
+    revenue_year: 2025
+    employees: 17598
+    industry: chemicals
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+
+  - name: Evonik
+    legal_name: Evonik Industries AG
+    domain: evonik.com
+    website: https://www.evonik.com
+    city: Essen
+    country: Germany
+    revenue_eur: 14069000000
+    revenue_year: 2025
+    employees: 31053
+    industry: chemicals
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+
+  - name: KION Group
+    legal_name: KION GROUP AG
+    domain: kiongroup.com
+    website: https://www.kiongroup.com
+    city: Frankfurt
+    country: Germany
+    revenue_eur: 11503000000
+    revenue_year: 2024
+    industry: industrial engineering
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: ZEISS
+    legal_name: Carl Zeiss AG
+    domain: zeiss.com
+    website: https://www.zeiss.com
+    city: Oberkochen
+    country: Germany
+    revenue_eur: 10894000000
+    revenue_year: 2024
+    employees: 46485
+    industry: industrial engineering / manufacturing
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: Zalando
+    legal_name: Zalando SE
+    domain: zalando.com
+    website: https://www.zalando.com
+    city: Berlin
+    country: Germany
+    revenue_eur: 10572500000
+    revenue_year: 2024
+    employees: 15309
+    industry: retail / consumer
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: MAHLE
+    legal_name: MAHLE GmbH
+    domain: mahle.com
+    website: https://www.mahle.com
+    city: Stuttgart
+    country: Germany
+    revenue_eur: 11681000000
+    revenue_year: 2024
+    employees: 67708
+    industry: automotive supplier
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: Volkswagen
+    legal_name: Volkswagen AG
+    domain: volkswagenag.com
+    website: https://www.volkswagenag.com
+    city: Wolfsburg
+    country: Germany
+    revenue_eur: 324656000000
+    revenue_year: 2024
+    employees: 682724
+    industry: manufacturing
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Siemens
+    legal_name: Siemens AG
+    domain: siemens.com
+    website: https://www.siemens.com
+    city: Munich
+    country: Germany
+    revenue_eur: 82930000000
+    revenue_year: 2024
+    industry: industrial engineering
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Bosch
+    legal_name: Robert Bosch GmbH
+    domain: bosch.com
+    website: https://www.bosch.com
+    city: Gerlingen
+    country: Germany
+    revenue_eur: 99020000000
+    revenue_year: 2024
+    industry: manufacturing / automotive supplier
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Deutsche Bahn
+    legal_name: Deutsche Bahn AG
+    domain: deutschebahn.com
+    website: https://www.deutschebahn.com
+    city: Berlin
+    country: Germany
+    industry: logistics
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Schwarz Group
+    legal_name: Schwarz Dienstleistung KG
+    domain: gruppe.schwarz
+    website: https://gruppe.schwarz
+    city: Neckarsulm
+    country: Germany
+    revenue_eur: 175400000000
+    revenue_year: 2024
+    industry: retail
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: Deutsche Telekom
+    legal_name: Deutsche Telekom AG
+    domain: telekom.com
+    website: https://www.telekom.com
+    city: Bonn
+    country: Germany
+    revenue_eur: 121050000000
+    revenue_year: 2024
+    industry: it
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  # --- Too small (published revenue under €5bn) ---
+  - name: Symrise
+    legal_name: Symrise AG
+    domain: symrise.com
+    website: https://www.symrise.com
+    city: Holzminden
+    country: Germany
+    revenue_eur: 4929000000
+    revenue_year: 2025
+    employees: 12745
+    industry: chemicals
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+
+  - name: Dürr
+    legal_name: Dürr AG
+    domain: durr.com
+    website: https://www.durr.com
+    city: Bietigheim-Bissingen
+    country: Germany
+    revenue_eur: 4698000000
+    revenue_year: 2024
+    industry: industrial engineering
+    source_urls:
+      - https://www.meyer-industryresearch.de/wp-content/uploads/2025/11/TOP100-Maschinenbauunternehmen-in-Deutschland-2025.pdf
+
+  - name: Messer
+    legal_name: Messer SE & Co. KGaA
+    domain: messergroup.com
+    website: https://www.messergroup.com
+    city: Bad Soden
+    country: Germany
+    revenue_eur: 4512000000
+    revenue_year: 2025
+    employees: 12257
+    industry: chemicals
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+
+  - name: STADA
+    legal_name: STADA Arzneimittel AG
+    domain: stada.com
+    website: https://www.stada.com
+    city: Bad Vilbel
+    country: Germany
+    revenue_eur: 4296000000
+    revenue_year: 2025
+    employees: 11749
+    industry: pharma
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
+
+  - name: SEW-EURODRIVE
+    legal_name: SEW-EURODRIVE GmbH & Co KG
+    domain: sew-eurodrive.com
+    website: https://www.sew-eurodrive.com
+    city: Bruchsal
+    country: Germany
+    revenue_eur: 4500000000
+    revenue_year: 2023
+    employees: 22000
+    industry: industrial engineering
+    source_urls:
+      - https://img.welt.de/bin/Top500_2024_Tabelle%20_bn-252640064.pdf
+
+  # --- Excluded sector: finance ---
+  - name: Deutsche Bank
+    legal_name: Deutsche Bank AG
+    domain: db.com
+    website: https://www.db.com
+    city: Frankfurt
+    country: Germany
+    revenue_eur: 65980000000
+    revenue_year: 2024
+    industry: bank
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Allianz
+    legal_name: Allianz SE
+    domain: allianz.com
+    website: https://www.allianz.com
+    city: Munich
+    country: Germany
+    revenue_eur: 113520000000
+    revenue_year: 2024
+    industry: insurance
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Munich Re
+    legal_name: Münchener Rückversicherungs-Gesellschaft AG
+    domain: munichre.com
+    website: https://www.munichre.com
+    city: Munich
+    country: Germany
+    industry: insurance
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  - name: Commerzbank
+    legal_name: Commerzbank AG
+    domain: commerzbank.com
+    website: https://www.commerzbank.com
+    city: Frankfurt
+    country: Germany
+    industry: bank
+    source_urls:
+      - https://www.statista.com/statistics/1218876/largest-germany-based-companies-revenue/
+
+  # --- Excluded sector: defense / Rüstungsbetrieb ---
+  - name: Rheinmetall
+    legal_name: Rheinmetall AG
+    domain: rheinmetall.com
+    website: https://www.rheinmetall.com
+    city: Düsseldorf
+    country: Germany
+    revenue_eur: 9751000000
+    revenue_year: 2024
+    employees: 28539
+    industry: wehrtechnik / defense
+    source_urls:
+      - https://www.welt.de/ig/4ffd13ca-9945-410f-a271-8954433bd88b/index/Top500.pdf
+
+  - name: HENSOLDT
+    legal_name: HENSOLDT AG
+    domain: hensoldt.net
+    website: https://www.hensoldt.net
+    city: Taufkirchen
+    country: Germany
+    revenue_eur: 2500000000
+    revenue_year: 2025
+    industry: defense electronics
+    source_urls:
+      - https://www.finanzen100.de/top100/die-grossten-borsennotierten-unternehmen-deutschlands/
+
+  # --- needs_review: unpublished revenue, DE HQ, employees in 8k–25k ---
+  - name: Brose
+    legal_name: Brose Fahrzeugteile SE & Co. Kommanditgesellschaft
+    domain: brose.com
+    website: https://www.brose.com
+    city: Coburg
+    country: Germany
+    employees: 25000
+    industry: automotive supplier
+    source_urls:
+      - https://www.marktundmittelstand.de/fileadmin/PDF/PDFs_fuer_Artikel/TOP_100_Mittelst%C3%A4ndische_Unternehmen_2025.pdf
+
+  # Foreign-parent DE operating company in band — review, not auto-qualify.
+  - name: Roche Deutschland
+    legal_name: Roche Deutschland Holding GmbH
+    domain: roche.de
+    website: https://www.roche.de
+    city: Grenzach-Wyhlen
+    country: Germany
+    revenue_eur: 8907000000
+    revenue_year: 2025
+    employees: 18405
+    industry: pharma / life sciences
+    foreign_parent: true
+    source_urls:
+      - https://www.vci.de/die-branche/zahlen-berichte/die-umsatzstaerksten-deutschen-chemieunternehmen.jsp
